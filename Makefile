@@ -7,7 +7,8 @@ $(PROJ):
 	ghc $(SRC) $(LD) -o $(PROJ)
 
 run: $(PROJ)
-	./$(PROJ) -2 bkg.in
+	#./$(PROJ) -2 bkg.in
+	./$(PROJ) -1 tin.in
 
 clean:
 	rm $(PROJ) *.hi
