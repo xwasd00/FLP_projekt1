@@ -1,13 +1,13 @@
 -- G = (N, T, S, P)
-
+-- TODO: sjednoceni komentaru (CZ nebo EN) + doplneni komentaru nekde
 module Main(main) where
     import System.Environment (getArgs)
     
     type Symbol = String
     type T = String
     type N = String
-    data Rule = Rule N [Symbol] deriving (Eq, Show)
-    data Set = Set N [N] deriving (Eq, Show)
+    data Rule = Rule {leftSide :: N, rightSide :: [Symbol]} deriving (Eq, Show)
+    data Set = Set {name :: N, elements :: [N]} deriving (Eq, Show)
 
 
     parseInput :: [String] -> ([N], [T], N, [Rule])
@@ -54,10 +54,11 @@ module Main(main) where
 
     -- Set "A" "AB" [Set "B" "BC"] -> Set "A" "ABC"
     expandSet :: Set -> [Set] -> Set
-    expandSet x [] = x
-    expandSet (Set m ms) ((Set o os):xs) = if o `elem` ms
-        then expandSet (Set m (mergeU ms os)) xs
-        else expandSet (Set m ms) xs
+    expandSet m [] = m
+    expandSet m (x:xs) = if (name x) `elem` (elements m)
+        then expandSet (Set (name m) newE) xs
+        else expandSet m xs
+        where newE = mergeU (elements m) (elements x)
 
     -- merge two lists into one with unique elements
     mergeU :: [Symbol] -> [Symbol] -> [Symbol]
@@ -65,6 +66,18 @@ module Main(main) where
     mergeU l (x:xs) = if x `elem` l
         then mergeU l xs
         else mergeU (l ++ [x]) xs
+
+
+    recreateRules :: [Set] -> [Rule] -> [Rule]
+    recreateRules [] _ = []
+    recreateRules (s:ss) r = (getRulesBySet s r) ++ recreateRules ss r
+
+    getRulesBySet :: Set -> [Rule] -> [Rule]
+    getRulesBySet s [] = []
+    getRulesBySet s (r:rs) = if leftSide r `elem` elements s && not easyRule
+        then (Rule (name s) (rightSide r)) : (getRulesBySet s rs)
+        else getRulesBySet s rs
+        where easyRule = length (rightSide r) == 1 && (head (rightSide r)) `elem` elements s
 
 
     printInner :: ([N], [T], N, [Rule]) -> IO()
@@ -78,18 +91,51 @@ module Main(main) where
         putStr "Rules: "
         print r
 
-    printOne :: ([N], [T], N, [Rule]) -> IO()
-    printOne (n,t,s,r) = do
+    printAlg1 :: ([N], [T], N, [Rule]) -> IO()
+    printAlg1 (n,t,s,r) = do
         let setsNext = sucSets n n r
-        print (expandSets setsNext setsNext)
-        putStrLn "TODO"
+        let sets = expandSets setsNext setsNext
+        let newRules = recreateRules sets r
+        --putStrLn "Sets:"
+        --print sets
+        --putStrLn "New Rules:"
+        --print newRules
+        printGrammar (n,t,s,newRules)
 
-    printTwo :: ([N], [T], N, [Rule]) -> IO()
-    printTwo (n,t,s,r) = do
-        print "TODO!"
+    printAlg2 :: ([N], [T], N, [Rule]) -> IO()
+    printAlg2 (n,t,s,r) = do
+        print "TODO!!!"
+        printGrammar (n,t,s,r)
 
-    -- TODO!! printGrammar bkg -> print in correct format
+    -- print grammar to stdout
+    printGrammar :: ([N], [T], N, [Rule]) -> IO()
+    printGrammar (n,t,s,r) = do
+        printList n
+        putStrLn ""
+        printList t
+        putStrLn ""
+        putStrLn s
+        printRules r
 
+    printList :: [String] -> IO()
+    printList [] = putStr ""
+    printList [x] = putStr x
+    printList (x:xs) = do
+        putStr x
+        putStr ","
+        printList xs
+
+    printRules :: [Rule] -> IO()
+    printRules [] = putStr ""
+    printRules (r:rs) = do
+        putStr (leftSide r)
+        putStr "->"
+        putStrLn (concatList (rightSide r))
+        printRules rs
+
+    concatList :: [String] -> String
+    concatList = foldl (++) ""
+        
     main = do
         (option:fileName) <- getArgs
         
@@ -101,7 +147,7 @@ module Main(main) where
         if option == "-i" 
             then printInner bkg
         else if option == "-1"
-            then printOne bkg
+            then printAlg1 bkg
         else if option == "-2"
-            then printTwo bkg
-        else putStrLn "Error - TODO"
+            then printAlg2 bkg
+        else putStrLn "Wrong option, possible options are '-i', '-1' or '-2'"
