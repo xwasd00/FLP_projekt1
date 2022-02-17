@@ -8,7 +8,8 @@ $(PROJ):
 
 run: $(PROJ)
 	#./$(PROJ) -2 bkg.in
-	./$(PROJ) -1 tin.in
+	#./$(PROJ) -1 tin.in
+	./$(PROJ) -2 < tin2.in
 
 clean:
 	rm $(PROJ) *.hi
