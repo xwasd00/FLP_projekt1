@@ -1,5 +1,6 @@
 -- G = (N, T, S, P)
 -- TODO: sjednoceni komentaru (CZ nebo EN) + doplneni komentaru nekde
+-- TODO: testy
 module Main(main) where
     import System.Environment (getArgs)
     
@@ -87,11 +88,14 @@ module Main(main) where
     ------------------------------------------------------------------------------
     ------------------------------- ALG2 -----------------------------------------
     ------------------------------------------------------------------------------
-    -- TODO: razeni pravidel
+    -- prerazeni pravidel
+    alg2RegroupRules :: [Rule] -> [Rule]
+    alg2RegroupRules r = [x | x <- r, not ('\'' `elem` leftSide x)] ++ [y | y <- r, '\'' `elem` leftSide y]
     
     alg2NewRules :: [T] -> [Rule] -> [Rule]
     alg2NewRules _ [] = []
-    alg2NewRules t (r:rs) = (alg2CreateNewRules t r) ++ (alg2NewRules t rs)
+    alg2NewRules t (r:rs) = [head newRules] ++ (alg2NewRules t (rs ++ tail newRules))
+        where newRules = alg2CreateNewRules t r
 
     alg2CreateNewRules :: [T] -> Rule -> [Rule]
     alg2CreateNewRules t r = if ruleLen == 1
@@ -134,7 +138,7 @@ module Main(main) where
     alg2 :: ([N], [T], N, [Rule]) -> ([N], [T], N, [Rule])
     alg2 (n,t,s,r) = (newNonterminals, t, s, newRules)
         where
-            newRules = alg2NewRules t r
+            newRules = alg2RegroupRules (alg2NewRules t r)
             newNonterminals = alg2NewNonterminals n newRules
 
 
