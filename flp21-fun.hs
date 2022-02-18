@@ -1,5 +1,5 @@
 -- G = (N, T, S, P)
--- TODO: sjednoceni komentaru (CZ nebo EN) + doplneni komentaru nekde
+-- TODO: sjednoceni komentaru (CZ nebo EN) + doplneni komentaru
 -- TODO: testy
 module Main(main) where
     import System.Environment (getArgs)
@@ -90,18 +90,22 @@ module Main(main) where
     ------------------------------------------------------------------------------
     -- prerazeni pravidel
     alg2RegroupRules :: [Rule] -> [Rule]
-    alg2RegroupRules r = [x | x <- r, not ('\'' `elem` leftSide x)] ++ [y | y <- r, '\'' `elem` leftSide y]
-    
+    alg2RegroupRules r = oldAlteredRules ++ newNontermRules ++ newTermRules
+        where
+            oldAlteredRules = [x | x <- r, not ('\'' `elem` leftSide x) && '<' /= head (leftSide x)]
+            newNontermRules = [y | y <- r, '<' == head (leftSide y)]
+            newTermRules = [z | z <- r, '\'' `elem` leftSide z]
+
     alg2NewRules :: [T] -> [Rule] -> [Rule]
     alg2NewRules _ [] = []
-    alg2NewRules t (r:rs) = [head newRules] ++ (alg2NewRules t (rs ++ tail newRules))
+    alg2NewRules t (r:rs) = newRules ++ (alg2NewRules t rs)
         where newRules = alg2CreateNewRules t r
 
     alg2CreateNewRules :: [T] -> Rule -> [Rule]
     alg2CreateNewRules t r = if ruleLen == 1
             then [r]
         else if ruleLen > 2
-            then [alteredRule] ++ (alg2CreateNewRules t newRule) ++ symToRule fS
+            then [alteredRule]++ (symToRule fS) ++ (alg2CreateNewRules t newRule)
         else alg2RuleWithTwoSymbols t r
         where 
             ruleLen = length (rightSide r)
@@ -136,7 +140,7 @@ module Main(main) where
 
 
     alg2 :: ([N], [T], N, [Rule]) -> ([N], [T], N, [Rule])
-    alg2 (n,t,s,r) = (newNonterminals, t, s, newRules)
+    alg2 (n,t,s,r) = (newNonterminals, t, s, unique newRules)
         where
             newRules = alg2RegroupRules (alg2NewRules t r)
             newNonterminals = alg2NewNonterminals n newRules
@@ -200,11 +204,15 @@ module Main(main) where
     concatList = foldl (++) ""
 
     -- merge two lists into one with unique elements
-    mergeU :: [String] -> [String] -> [String]
+    mergeU :: Eq a => [a] -> [a] -> [a]
     mergeU l [] = l
     mergeU l (x:xs) = if x `elem` l
         then mergeU l xs
         else mergeU (l ++ [x]) xs
+
+    unique :: Eq a => [a] -> [a]
+    unique [] = []
+    unique (x:xs) = x:(unique (filter (/=x) xs))
     
     ------------------------------------------------------------------------------
     -------------------------------- MAIN ----------------------------------------
