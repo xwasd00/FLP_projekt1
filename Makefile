@@ -1,18 +1,36 @@
+ifndef VERBOSE
+.SILENT:
+endif
 LD=
-SRC=flp21-fun.hs
+SRCDIR=src/
+TESTDIR=test/
+DIFFDIR=diff/
+SRC=$(wildcard $(SRCDIR)*.hs)
 PROJ=flp21-fun
 LOGIN=xsovam00
+TEST_INPUTS:=$(wildcard $(TESTDIR)*.in)
+
 .PHONY:$(PROJ)
 $(PROJ):
 	ghc $(SRC) $(LD) -o $(PROJ)
 
 run: $(PROJ)
-	./$(PROJ) -2 bkg-a2.in
-	#./$(PROJ) -1 tin-a1.in
-	#./$(PROJ) -2 < tin-a2.in
+	./$(PROJ) -2 < test/test00-2.in
 
 clean:
-	rm $(PROJ) *.hi
+	rm -rf $(PROJ) $(SRCDIR)*.hi $(SRCDIR)*.o $(DIFFDIR) *.zip
 
-pack:
-	zip -r $(LOGIN).zip ./
+test:$(DIFFDIR) $(TEST_INPUTS)
+
+$(TEST_INPUTS): $(TESTDIR)%.in: $(PROJ)
+	if ./$< $(shell echo -n "$*" | tail -c 2) $@ | diff $(TESTDIR)$*.out - > $(DIFFDIR)$*.diff; then \
+		echo "$* OK"; \
+	else \
+		echo "$* FAIL"; \
+	fi
+
+$(DIFFDIR):
+	mkdir -p $(DIFFDIR)
+
+pack: clean
+	zip -r flp-fun-$(LOGIN).zip ./src ./doc ./test ./Makefile

@@ -4,7 +4,7 @@ S
 S->AB
 A->a'<Ab>
 A->a'b'
-B->AB         (??)
+B->AB
 B->c'<Bd>
 B->c'd'
 <Ab>->Ab'
