@@ -4,7 +4,7 @@ endif
 LD=
 SRCDIR=src/
 TESTDIR=test/
-DIFFDIR=diff/
+DIFFDIR=test-diff/
 SRC=$(wildcard $(SRCDIR)*.hs)
 PROJ=flp21-fun
 LOGIN=xsovam00

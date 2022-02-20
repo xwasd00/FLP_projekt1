@@ -1,6 +1,5 @@
 -- TODO: Readme, tests
 module Main(main) where
-    import System.IO (hPutStrLn, stderr)
     import System.Environment (getArgs)
     
     -- type and data definitions
@@ -235,6 +234,7 @@ module Main(main) where
     ------------------------------------------------------------------------------
     -------------------------------- MAIN ----------------------------------------
     ------------------------------------------------------------------------------
+    main :: IO()
     main = do
         (option:fileName) <- getArgs
         
@@ -250,5 +250,5 @@ module Main(main) where
             then printAlg1 bkg
         else if option == "-2"
             then printAlg2 bkg
-        else hPutStrLn stderr "Wrong option, possible options are '-i', '-1' or '-2'"
+        else fail "Wrong option, possible options are '-i', '-1' or '-2'"
 ------------------------------------END------------------------------------------
