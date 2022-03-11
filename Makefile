@@ -8,29 +8,30 @@ DIFFDIR=test-diff/
 SRC=$(wildcard $(SRCDIR)*.hs)
 PROJ=flp21-fun
 LOGIN=xsovam00
+ZIP=flp-fun-$(LOGIN).zip
 TEST_INPUTS:=$(wildcard $(TESTDIR)*.in)
 
 .PHONY:$(PROJ)
 $(PROJ):
-	ghc $(SRC) $(LD) -o $(PROJ)
+	ghc $(SRC) $(LD) -Wall -o $(PROJ)
 
 run: $(PROJ)
 	./$(PROJ) -2 < test/test00-2.in
 
 clean:
-	rm -rf $(PROJ) $(SRCDIR)*.hi $(SRCDIR)*.o $(DIFFDIR) *.zip
+	rm -rf $(PROJ) $(SRCDIR)*.hi $(SRCDIR)*.o $(DIFFDIR) $(ZIP)
 
 test:$(DIFFDIR) $(TEST_INPUTS)
 
 $(TEST_INPUTS): $(TESTDIR)%.in: $(PROJ)
-	if ./$< $(shell echo -n "$*" | tail -c 2) $@ | diff $(TESTDIR)$*.out - > $(DIFFDIR)$*.diff; then \
+	if ./$< $(shell echo -n "$*" | tail -c 2) $@ > $(DIFFDIR)$*.out && diff -c $(TESTDIR)$*.out $(DIFFDIR)$*.out > $(DIFFDIR)$*.diff; then \
 		echo "$* OK"; \
 	else \
-		echo "$* FAIL"; \
+		echo "$* FAIL - see in directory $(DIFFDIR)"; \
 	fi
 
 $(DIFFDIR):
 	mkdir -p $(DIFFDIR)
 
 pack: clean
-	zip -r flp-fun-$(LOGIN).zip ./src ./doc ./test ./Makefile
+	zip -r $(ZIP) ./src ./doc ./test ./Makefile
