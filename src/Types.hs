@@ -14,11 +14,11 @@ module Types where
     type N = String      -- nonterminal
     type Symbol = String -- nonterminal or terminal
     -- rule definition: leftSide -> rightSide
-    data Rule = Rule {leftSide::N, rightSide::[Symbol]} deriving (Eq, Show)
+    data Rule = Rule {leftSide :: N, rightSide :: [Symbol]} deriving (Eq, Show)
     -- set definition
-    data Set = Set {name::N, elements::[N]} deriving (Eq, Show)
-    -- bkg definition
-    data Bkg = Bkg {nonterms::[N], terms::[T], start::N, rules::[Rule]} -- deriving (Show)
+    data Set = Set {name :: N, elements :: [N]} deriving (Eq, Show)
+    -- grammar definition
+    data Bkg = Bkg {nonterms :: [N], terms :: [T], start :: N, rules :: [Rule]}
 
     instance Show Bkg where
         show (Bkg n t s r) = "nonterminals: " ++ show n ++ "\n" ++ "terminals: " ++ show t ++ "\n" ++ "start: " ++ show s ++ "\n" ++ "rules: " ++ show r
