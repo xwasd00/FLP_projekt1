@@ -3,7 +3,7 @@ Project: FLP project - bkg-2-cnf
 Author: Michal Sova <xsovam00@stud.fit.vutbr.cz>
 Year: 2022
 Module: Main
-Description: Main file
+Description: Main file, handling arguments and IO
 -}
 
 {-# LANGUAGE RecordWildCards #-}
@@ -23,21 +23,19 @@ module Main(main) where
     -- print grammar to stdout
     printGrammar :: Bkg -> IO()
     printGrammar (Bkg n t s r) = do
-        printList n
-        putStrLn ""
-        printList t
-        putStrLn ""
+        printListLn n
+        printListLn t
         putStrLn s
         printRules r
 
     -- print elements of list divided by comma: ["a", "b"] => a,b
-    printList :: [String] -> IO()
-    printList [] = putStr ""
-    printList [x] = putStr x
-    printList (x:xs) = do
+    printListLn :: [String] -> IO()
+    printListLn [] = putStr "\n"
+    printListLn [x] = putStr (x ++ "\n")
+    printListLn (x:xs) = do
         putStr x
         putStr ","
-        printList xs
+        printListLn xs
 
     -- print rules: Rule "A" ["a", "B"] => A->aB
     printRules :: [Rule] -> IO()

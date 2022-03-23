@@ -3,7 +3,7 @@ Project: FLP project - bkg-2-cnf
 Author: Michal Sova <xsovam00@stud.fit.vutbr.cz>
 Year: 2022
 Module: Parser
-Description: Implementation of bkg parser
+Description: Implementation of grammar parser
 -}
 
 {-# LANGUAGE RecordWildCards #-}
@@ -16,8 +16,8 @@ module Parser (parseInput) where
     parseInput (n:t:s:rules) = Bkg (parseN n) (parseT t) start (getRules rules)
         where 
             start = if s `elem` (parseN n) then s
-                else error "parseInput: could not match starting symbol with nonterminals"
-    parseInput _ = error "parseInput: wrong representation of bkg"
+                else error "Parser: could not match starting symbol with nonterminals"
+    parseInput _ = error "Parser: wrong representation of bkg"
     
     -- get list of nonterminal symbols
     parseN :: String -> [N]
@@ -35,5 +35,5 @@ module Parser (parseInput) where
     -- get rule from string (line)
     getRule :: String -> Rule
     getRule (x:'-':'>':xs) = Rule [x] [[s] | s <- xs]
-    getRule s = error ("getRule: wrong representation of rule: " ++ s)
+    getRule s = error ("Parser: wrong representation of rule: " ++ s)
 

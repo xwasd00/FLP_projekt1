@@ -1,7 +1,6 @@
 ifndef VERBOSE
 .SILENT:
 endif
-LD=
 SRCDIR=src/
 TESTDIR=test/
 DIFFDIR=test-diff/
@@ -13,7 +12,7 @@ TEST_INPUTS:=$(wildcard $(TESTDIR)*.in)
 
 .PHONY:$(PROJ)
 $(PROJ):
-	ghc $(SRC) $(LD) -Wall -o $(PROJ)
+	ghc $(SRC) -Wall -o $(PROJ)
 
 run: $(PROJ)
 	./$(PROJ) -2 < test/test00-2.in
