@@ -9,4 +9,4 @@ Implementace je rozdělena do několika souborů v `src/`.
 - `Algorithm2.hs` - Převedení gramatiky do CNF formy.
 - `Helper.hs` - Pomocné funkce.
 ## Testy
-V adresáři `test/` se nachází pár vzorových testovacích souborů. Test se spustí pomocí `make test`, přičemž se vytvoří adresář `test-diff/`. Pokud výstup nesouhlasí se vzorovým, je vytvořena adresář `test-diff/` a je vytvořen soubor s rozdílem výstupu od vzorového pomocí programu diff. V případě `make clean` se odstraní s istatními soubory i adresář `test-diff/`.
+V adresáři `test/` se nachází pár vzorových testovacích souborů, kde `-1` a `-2` na konci názvu souboru určuje argument při spuštění programu (`./flp-fun -1` `./flp-fun -2`). Test se spustí pomocí `make test`, přičemž se vytvoří adresář `test-diff/`. Pokud výstup nesouhlasí se vzorovým, je vytvořena adresář `test-diff/` a je vytvořen soubor s rozdílem výstupu od vzorového pomocí programu diff. V případě `make clean` se odstraní s istatními soubory i adresář `test-diff/`.

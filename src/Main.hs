@@ -59,7 +59,7 @@ module Main(main) where
 
         let bkg = parseInput (lines contents)
         if option == "-i" 
-            then print bkg
+            then printGrammar bkg
         else if option == "-1"
             then printGrammar $ alg1 bkg
         else if option == "-2"
