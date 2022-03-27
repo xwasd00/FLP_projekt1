@@ -10,10 +10,11 @@ Description: Implementation of grammar parser
 
 module Parser (parseInput) where
     import Types
+    import Helper (unique)
 
     -- parse list of input lines into grammar
     parseInput :: [String] -> Bkg
-    parseInput (n:t:s:rules) = Bkg (parseN n) (parseT t) start (getRules rules)
+    parseInput (n:t:s:rules) = Bkg (unique $ parseN n) (unique $ parseT t) start (unique $ getRules rules)
         where 
             start = if s `elem` (parseN n) then s
                 else error "Parser: could not match starting symbol with nonterminals"
